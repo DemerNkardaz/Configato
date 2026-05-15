@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE keyboardmap>
+<keyboardmap version="1.0">
+
+    <!-- Белые клавиши -->
+    <mapping key="Q" note="33"/>
+    <mapping key="W" note="35"/>
+    <mapping key="E" note="36"/>
+    <mapping key="R" note="38"/>
+    <mapping key="T" note="40"/>
+    <mapping key="Y" note="41"/>
+    <mapping key="U" note="43"/>
+    <mapping key="I" note="45"/>
+    <mapping key="O" note="47"/>
+    <mapping key="P" note="48"/>
+    <mapping key="[" note="50"/>
+    <mapping key="]" note="52"/>
+    <mapping key="\" note="53"/>
+
+    <mapping key="A" note="55"/>
+    <mapping key="S" note="57"/>
+    <mapping key="D" note="59"/>
+    <mapping key="F" note="60"/>
+    <mapping key="G" note="62"/>
+    <mapping key="H" note="64"/>
+    <mapping key="J" note="65"/>
+    <mapping key="K" note="67"/>
+    <mapping key="L" note="69"/>
+    <mapping key=";" note="71"/>
+    <mapping key="'" note="72"/>
+
+    <mapping key="Z" note="74"/>
+    <mapping key="X" note="76"/>
+    <mapping key="C" note="77"/>
+    <mapping key="V" note="79"/>
+    <mapping key="B" note="81"/>
+    <mapping key="N" note="83"/>
+    <mapping key="M" note="84"/>
+    <mapping key="," note="86"/>
+    <mapping key="." note="88"/>
+    <mapping key="/" note="89"/>
+
+    <!-- Чёрные клавиши -->
+    <mapping key="`" note="34"/>
+    <mapping key="1" note="37"/>
+    <mapping key="2" note="39"/>
+    <mapping key="3" note="42"/>
+    <mapping key="4" note="44"/>
+    <mapping key="5" note="46"/>
+    <mapping key="6" note="49"/>
+    <mapping key="7" note="51"/>
+    <mapping key="8" note="54"/>
+    <mapping key="9" note="56"/>
+    <mapping key="0" note="58"/>
+    <mapping key="-" note="61"/>
+    <mapping key="=" note="63"/>
+
+</keyboardmap>
