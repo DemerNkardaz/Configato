@@ -25,11 +25,26 @@ Q Hold
 ------
 	I Hold
 ------
-	S2 A2 \2 ]2 [2 P2
+	A2 \2 ]2 [2 P2
+------
+------
+	I Up
 ------
 ------
 	F H D J G S
 ------
 ------
 	L K J H
+------
+------
+	A D S G F J H L K ' ;
+	Z X
+	Q Up
+------
+------
+	F G D H S
+------
+------
+	Q Hold
+	F G D H <END RELEASE>
 ------
