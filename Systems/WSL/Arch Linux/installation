@@ -2,6 +2,8 @@
 # ARCH WSL SETUP
 # ============================================================
 
+# Установка пароля для root
+wsl -u root passwd root
 
 # SYSTEM UPDATE
 # ------------------------------------------------------------
@@ -38,11 +40,25 @@ pacman -S qt6-svg qt6ct
 pacman -S papirus-icon-theme adwaita-icon-theme
 
 
+# DEVELOPMENT
+# ------------------------------------------------------------
+pacman -S sudo
+pacman -S git
+pacman -S fakeroot debugedit make cmake
+pacman -S --needed base-devel
+pacman -S --needed linux-headers
+
 # OTHER APPS
 # ------------------------------------------------------------
 pacman -S firefox
 pacman -S firefox-i18n-ru libreoffice-fresh-ru gimp-help-ru
 
+# ============================================================
+# AUR HELPER
+# ============================================================
+git clone https://aur.archlinux.org/yay.git
+cd yay
+makepkg -si
 
 # ============================================================
 # РАЗОВЫЕ КОМАНДЫ
@@ -58,3 +74,14 @@ localectl set-locale LANG=ru_RU.UTF-8
 
 # Настройка тем Qt
 qt6ct &
+
+# ============================================================
+# Добавление пользователя
+# ============================================================
+
+useradd -m -G wheel <ИМЯ>
+passwd <ИМЯ>
+
+echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+chown <ИМЯ>:<ИМЯ> /home/<ИМЯ>/.bashrc /home/<ИМЯ>/.bash_profile /home/<ИМЯ>/.xprofile
