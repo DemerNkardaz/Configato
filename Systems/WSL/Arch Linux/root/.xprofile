@@ -1,0 +1,7 @@
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+fcitx5 -d
+
+export QT_QPA_PLATFORMTHEME=qt6ct
+export GDK_BACKEND=x11

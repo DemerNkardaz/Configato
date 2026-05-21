@@ -1,0 +1,60 @@
+# ============================================================
+# ARCH WSL SETUP
+# ============================================================
+
+
+# SYSTEM UPDATE
+# ------------------------------------------------------------
+pacman -Syu
+
+
+# FONTS
+# ------------------------------------------------------------
+pacman -S ttf-dejavu ttf-liberation
+
+
+# DESKTOP ENVIRONMENT
+# ------------------------------------------------------------
+pacman -S xorg-xwayland
+pacman -S xfce4 xfce4-goodies xfce4-i18n
+pacman -S xrdp
+pacman -S --needed base-devel git
+
+
+# INPUT METHOD (fcitx5)
+# ------------------------------------------------------------
+pacman -S fcitx5 fcitx5-configtool fcitx5-gtk fcitx5-qt kcm-fcitx5
+
+
+# FILE MANAGER
+# ------------------------------------------------------------
+pacman -S pcmanfm-qt    # альтернатива Qt
+pacman -S dolphin       # альтернатива KDE
+
+
+# THEMES & ICONS
+# ------------------------------------------------------------
+pacman -S qt6-svg qt6ct
+pacman -S papirus-icon-theme adwaita-icon-theme
+
+
+# OTHER APPS
+# ------------------------------------------------------------
+pacman -S firefox
+pacman -S firefox-i18n-ru libreoffice-fresh-ru gimp-help-ru
+
+
+# ============================================================
+# РАЗОВЫЕ КОМАНДЫ
+# ============================================================
+
+# Запустить pcmanfm-qt в окружении LXQt (если не через XFCE)
+env XDG_CURRENT_DESKTOP=LXQt pcmanfm-qt &
+
+# Настройка языка
+echo "ru_RU.UTF-8 UTF-8" >> /etc/locale.gen
+locale-gen
+localectl set-locale LANG=ru_RU.UTF-8
+
+# Настройка тем Qt
+qt6ct &
