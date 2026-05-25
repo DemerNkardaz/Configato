@@ -52,6 +52,7 @@ pacman -S --needed linux-headers
 # ------------------------------------------------------------
 pacman -S firefox
 pacman -S firefox-i18n-ru libreoffice-fresh-ru gimp-help-ru
+sudo pacman -S fastfetch
 
 # ============================================================
 # AUR HELPER

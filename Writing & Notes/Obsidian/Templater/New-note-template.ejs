@@ -1,0 +1,62 @@
+<%*
+const currentDate = tp.date.now("YYYY_MM_DD-HH_mm_ss_SSS")
+await tp.file.rename(currentDate)
+
+const fileTitle = await tp.system.prompt("Название")
+
+const sanitized = fileTitle
+  .replace(/[\\/:*?"<>|#^[\]]/g, " ")
+  .replace(/\s+/g, " ")
+  .trim()
+
+await tp.file.rename(sanitized)
+
+const entityType = await tp.system.suggester(
+  ["Персонаж", "Локация", "Государство/Империя", "Город", "Поселение", "Раса", "Событие", "Артефакт", "Предмет", "Оружие", "Организация", "Явление", "Прочее"],
+  ["character", "location", "state", "town", "settlement", "race", "event", "artifact", "item", "weapon", "org", "phenomenon", "misc"]
+)
+
+const templates = {
+  character: `## Внешность\n\n## Характер\n\n## История\n\n## Роль в мире\n\n## Связи\n`,
+  location:  `## Описание\n\n## История\n\n## Обитатели\n\n## Значение\n`,
+  state:     `## Описание\n\n## История\n\n## Правительство\n\n## Армия\n\n## Экономика\n\n## Культура\n\n## Известные личности\n`,
+  town:      `## Описание\n\n## История\n\n## Районы\n\n## Власть\n\n## Известные места\n\n## Известные личности\n`,
+  settlement:`## Описание\n\n## История\n\n## Население\n\n## Особенности\n`,
+  race:      `## Внешность\n\n## Культура и традиции\n\n## История\n\n## Отношения с другими расами\n\n## Известные представители\n`,
+  event:     `## Что произошло\n\n## Участники\n\n## Причины\n\n## Последствия\n`,
+  artifact:  `## Описание\n\n## Происхождение\n\n## Свойства\n\n## Текущее местонахождение\n\n## История владельцев\n`,
+  item:      `## Описание\n\n## Происхождение\n\n## Свойства\n\n## Текущее местонахождение\n`,
+  weapon:    `## Описание\n\n## Происхождение\n\n## Характеристики\n\n## История владельцев\n\n## Текущее местонахождение\n`,
+  org:       `## Описание\n\n## История\n\n## Структура\n\n## Цели и методы\n\n## Известные члены\n\n## Влияние\n`,
+  phenomenon:`## Описание\n\n## Природа и механизм\n\n## Проявления\n\n## Влияние на мир\n`,
+  misc:      `## Описание\n\n## Заметки\n`,
+}
+
+const body = templates[entityType] ?? `## Описание\n\n## Заметки\n`
+
+const status = await tp.system.suggester(
+  ["🌱 Набросок", "✍️ В работе", "✅ Готово"],
+  ["draft", "wip", "done"]
+)
+
+const tagsRaw = await tp.system.prompt("Теги через запятую (или пусто)", "")
+const tagList = tagsRaw ? tagsRaw.split(",").map(t => t.trim()) : []
+
+const aliases = await tp.system.prompt("Псевдонимы/алиасы (через запятую)", "")
+const aliasList = aliases ? aliases.split(",").map(a => a.trim()) : []
+-%>
+---
+title: <% fileTitle %>
+type: <% entityType %>
+status: <% status %>
+created: <% tp.date.now("YYYY-MM-DD") %>
+tags: [<% tagList.join(", ") %>]
+aliases: [<% aliasList.join(", ") %>]
+---
+
+# <% fileTitle %>
+
+<% body %>
+
+---
+Последнее изменение:: `$= dv.current().file.mtime`
