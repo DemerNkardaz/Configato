@@ -8,10 +8,16 @@
 | BRAT                          | TfTHacker        |
 | Git                           | Vinzent          |
 |                               |                  |
+| Longform                      | kevboh           |
 | Callout Manager               | eth-p            |
 | Open Tab Settings             | jesse-r-s-hines  |
 | VSCode Editor                 | sunxvming        |
 | Better Search Views           | ivan-lednev      |
+| Various complements           | tadashi-aikawa   |
+| Outliner                      | vslinko          |
+| Flexplorer                    | kh4f             |
+| Navigate Headings             | rumcajsev        |
+| Typst Mate                    | azyarashi        |
 |                               |                  |
 | Additional Icons              | Matthew Turk     |
 | Admonition                    | Jeremy Valentine |
@@ -36,12 +42,14 @@
 | Iconic                        | Holo             |
 | Iconize                       | Florian Woelki   |
 | Kanban                        | mgmeyers         |
+| Keep the Rhythm               | benjaminezequiel |
 | Latex Suite                   | artisticat       |
 | Markdown Formatting Assistant | Reocin           |
 | Nover word count              | Isaac Lyman      |
 | Omnisearch                    | Simon Cambier    |
 | Open vault in VS Code         | Nomar Cub        |
 | Recent Files                  | Tony Grosinger   |
+| Reading Time                  | avr              |
 | Sheet Plus                    | ljcoder          |
 | Style Settings                | mgmeyers         |
 | TagFolder                     | vrtmrz           |
