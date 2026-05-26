@@ -17,6 +17,7 @@
 | Outliner                      | vslinko          |
 | Flexplorer                    | kh4f             |
 | Navigate Headings             | rumcajsev        |
+| Update Time                   | Sébastien Dubois |
 | Typst Mate                    | azyarashi        |
 |                               |                  |
 | Additional Icons              | Matthew Turk     |
