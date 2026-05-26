@@ -10,6 +10,7 @@
 |                               |                  |
 | Longform                      | kevboh           |
 | Callout Manager               | eth-p            |
+| Pretty properties             | anareaty         |
 | Open Tab Settings             | jesse-r-s-hines  |
 | VSCode Editor                 | sunxvming        |
 | Better Search Views           | ivan-lednev      |
