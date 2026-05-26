@@ -1,92 +1,103 @@
 <%*
-const fileTitle = await tp.system.prompt("Название")
+let _fileTitle, _entityType, _status, _tagList, _aliasList, _body, _nameVariants, _pseudonyms
 
-const sanitized = fileTitle
-  .replace(/[\\/:*?"<>|#^[\]]/g, " ")
-  .replace(/\s+/g, " ")
-  .trim()
+try {
+  _fileTitle = await tp.system.prompt("Название")
+  if (!_fileTitle) { new Notice("Шаблонизация отменена"); return }
 
-await tp.file.rename(sanitized)
+  const sanitized = _fileTitle.replace(/[\\/:*?"<>|#^[\]]/g, " ").replace(/\s+/g, " ").trim()
+  await tp.file.rename(sanitized)
 
-const entityType = await tp.system.suggester(
-  ["Персонаж", "Локация", "Государство/Империя", "Город", "Поселение", "Раса", "Событие", "Артефакт", "Предмет", "Оружие", "Организация", "Явление", "Прочее"],
-  ["character", "location", "state", "town", "settlement", "race", "event", "artifact", "item", "weapon", "org", "phenomenon", "misc"]
-)
+  _entityType = await tp.system.suggester(
+    ["Персонаж", "Локация", "Государство/Империя", "Город", "Поселение", "Раса", "Событие", "Артефакт", "Предмет", "Оружие", "Организация", "Явление", "Прочее"],
+    ["character", "location", "state", "town", "settlement", "race", "event", "artifact", "item", "weapon", "org", "phenomenon", "misc"]
+  )
+  if (!_entityType) { new Notice("Шаблонизация отменена"); return }
 
-const templates = {
-  character: `## Внешность\n\n## Характер\n\n## История\n\n## Роль в мире\n\n## Связи\n`,
-  location:  `## Описание\n\n## История\n\n## Обитатели\n\n## Значение\n`,
-  state:     `## Описание\n\n## История\n\n## Правительство\n\n## Армия\n\n## Экономика\n\n## Культура\n\n## Известные личности\n`,
-  town:      `## Описание\n\n## История\n\n## Районы\n\n## Власть\n\n## Известные места\n\n## Известные личности\n`,
-  settlement:`## Описание\n\n## История\n\n## Население\n\n## Особенности\n`,
-  race:      `## Внешность\n\n## Культура и традиции\n\n## История\n\n## Отношения с другими расами\n\n## Известные представители\n`,
-  event:     `## Что произошло\n\n## Участники\n\n## Причины\n\n## Последствия\n`,
-  artifact:  `## Описание\n\n## Происхождение\n\n## Свойства\n\n## Текущее местонахождение\n\n## История владельцев\n`,
-  item:      `## Описание\n\n## Происхождение\n\n## Свойства\n\n## Текущее местонахождение\n`,
-  weapon:    `## Описание\n\n## Происхождение\n\n## Характеристики\n\n## История владельцев\n\n## Текущее местонахождение\n`,
-  org:       `## Описание\n\n## История\n\n## Структура\n\n## Цели и методы\n\n## Известные члены\n\n## Влияние\n`,
-  phenomenon:`## Описание\n\n## Природа и механизм\n\n## Проявления\n\n## Влияние на мир\n`,
-  misc:      `## Описание\n\n## Заметки\n`,
-}
+  const templates = {
+    character:  `## Внешность\n\n## Характер\n\n## История\n\n## Роль в мире\n\n## Связи\n`,
+    location:   `## Описание\n\n## История\n\n## Обитатели\n\n## Значение\n`,
+    state:      `## Описание\n\n## История\n\n## Правительство\n\n## Армия\n\n## Экономика\n\n## Культура\n\n## Известные личности\n`,
+    town:       `## Описание\n\n## История\n\n## Районы\n\n## Власть\n\n## Известные места\n\n## Известные личности\n`,
+    settlement: `## Описание\n\n## История\n\n## Население\n\n## Особенности\n`,
+    race:       `## Внешность\n\n## Культура и традиции\n\n## История\n\n## Отношения с другими расами\n\n## Известные представители\n`,
+    event:      `## Что произошло\n\n## Участники\n\n## Причины\n\n## Последствия\n`,
+    artifact:   `## Описание\n\n## Происхождение\n\n## Свойства\n\n## Текущее местонахождение\n\n## История владельцев\n`,
+    item:       `## Описание\n\n## Происхождение\n\n## Свойства\n\n## Текущее местонахождение\n`,
+    weapon:     `## Описание\n\n## Происхождение\n\n## Характеристики\n\n## История владельцев\n\n## Текущее местонахождение\n`,
+    org:        `## Описание\n\n## История\n\n## Структура\n\n## Цели и методы\n\n## Известные члены\n\n## Влияние\n`,
+    phenomenon: `## Описание\n\n## Природа и механизм\n\n## Проявления\n\n## Влияние на мир\n`,
+    misc:       `## Описание\n\n## Заметки\n`,
+  }
+  _body = templates[_entityType] ?? `## Описание\n\n## Заметки\n`
 
-const body = templates[entityType] ?? `## Описание\n\n## Заметки\n`
+	if (_entityType === "character") {
+		const nameVariantsRaw = await tp.system.prompt("Варианты имени (через запятую, или пусто)", "")
+		_nameVariants = nameVariantsRaw ? nameVariantsRaw.split(",").map(n => n.trim()) : []
 
-const status = await tp.system.suggester(
-  ["🌱 Набросок", "✍️ В работе", "✅ Готово"],
-  ["draft", "wip", "done"]
-)
+		const pseudonymesRaw = await tp.system.prompt("Псевдонимы (через запятую, или пусто)", "")
+		_pseudonyms = nameVariantsRaw ? pseudonymesRaw.split(",").map(n => n.trim()) : []
+	}
 
-const tagsRaw = await tp.system.prompt("Теги через запятую (или пусто)", "")
-const tagList = tagsRaw ? tagsRaw.split(",").map(t => t.trim()) : []
+  _status = await tp.system.suggester(
+    ["🌱 Набросок", "✍️ В работе", "✅ Готово"],
+    ["draft", "wip", "done"]
+  )
+  if (!_status) { new Notice("Шаблонизация отменена"); return }
 
-const aliases = await tp.system.prompt("Псевдонимы/алиасы (через запятую)", "")
-const aliasList = aliases ? aliases.split(",").map(a => a.trim()) : []
--%>
+  const tagsRaw = await tp.system.prompt("Теги через запятую (или пусто)", "")
+  _tagList = tagsRaw ? tagsRaw.split(",").map(t => t.trim()) : []
+
+  const aliasesRaw = await tp.system.prompt("Псевдонимы/алиасы (через запятую)", "")
+  _aliasList = aliasesRaw ? aliasesRaw.split(",").map(a => a.trim()) : []
+
+  tR += `---
+title: ${_fileTitle}
+${_entityType === "character" ? `name-variants:\n${_nameVariants.map(n => `  - ${n}`).join("\n")}` : ""}
+${_entityType === "character" ? `pseudonyms:\n${_pseudonyms.map(n => `  - ${n}`).join("\n")}` : ""}
+type: ${_entityType}
+status: ${_status}
+created: ${tp.date.now("YYYY-MM-DD")}
+tags: [${_tagList.join(", ")}]
+aliases: [${_aliasList.join(", ")}]
 ---
-title: <% fileTitle %>
-type: <% entityType %>
-status: <% status %>
-created: <% tp.date.now("YYYY-MM-DD") %>
-tags: [<% tagList.join(", ") %>]
-aliases: [<% aliasList.join(", ") %>]
----
-# <% fileTitle %>
+# ${_fileTitle}
 
-<% body %>
+${_body}
 
 ---
 
 > [!link-here]- На эту страницу ссылаются
-> ```dataviewjs
+> \`\`\`dataviewjs
 > const current = dv.current().file.path
 > const pages = dv.pages().where(p =>
 >   p.file.outlinks.some(l => l.path === current)
 > )
 > const html = pages.map(p =>
->   `<a href="${p.file.path}" class="internal-link" style="
+>   \`<a href="\${p.file.path}" class="internal-link" style="
 >     display: inline-block; padding: 4px 10px; margin: 3px;
 >     border-radius: 12px; background: var(--interactive-accent);
 >     color: var(--text-on-accent); font-size: 0.85em; text-decoration: none;
->   ">${p.file.name}</a>`
+>   ">\${p.file.name}</a>\`
 > ).join("")
 > dv.el("div", html || "Нет ссылок", {cls: "dataview"})
-> ```
+> \`\`\`
 
 > [!link-to]- Эта страница ссылается на
-> ```dataviewjs
+> \`\`\`dataviewjs
 > const pages = dv.current().file.outlinks
 > const html = pages.map(p =>
->   `<a href="${p.path}" class="internal-link" style="
+>   \`<a href="\${p.path}" class="internal-link" style="
 >     display: inline-block; padding: 4px 10px; margin: 3px;
 >     border-radius: 12px; background: var(--interactive-accent);
 >     color: var(--text-on-accent); font-size: 0.85em; text-decoration: none;
->   ">${p.path.split("/").pop().replace(".md", "")}</a>`
+>   ">\${p.path.split("/").pop().replace(".md", "")}</a>\`
 > ).join("")
 > dv.el("div", html || "Нет ссылок", {cls: "dataview"})
-> ```
+> \`\`\`
 
 > [!tag-siblings]- Сиблинги по тегам
-> ```dataviewjs
+> \`\`\`dataviewjs
 > const tags = dv.current().tags
 > if (!tags || tags.length === 0) {
 >   dv.el("div", "Нет тегов", {})
@@ -97,18 +108,18 @@ aliases: [<% aliasList.join(", ") %>]
 >     p.tags.some(t => tags.includes(t))
 >   )
 >   const html = pages.map(p =>
->     `<a href="${p.file.path}" class="internal-link" style="
+>     \`<a href="\${p.file.path}" class="internal-link" style="
 >       display: inline-block; padding: 4px 10px; margin: 3px;
 >       border-radius: 12px; background: var(--interactive-accent);
 >       color: var(--text-on-accent); font-size: 0.85em; text-decoration: none;
->     ">${p.file.name}</a>`
+>     ">\${p.file.name}</a>\`
 >   ).join("")
 >   dv.el("div", html || "Нет совпадений", {cls: "dataview"})
 > }
-> ```
+> \`\`\`
 
 > [!info] Создано
-> ```dataviewjs
+> \`\`\`dataviewjs
 > const created = new Date(dv.current().created)
 > const updated = new Date(dv.current().file.mtime)
 > const now = new Date()
@@ -122,17 +133,22 @@ aliases: [<% aliasList.join(", ") %>]
 >   const days = Math.floor((now - d) / 86400000)
 >   if (days === 0) return "сегодня"
 >   if (days === 1) return "вчера"
->   if (days < 5) return `${days} дня назад`
->   return `${days} дней назад`
+>   if (days < 5) return \`\${days} дня назад\`
+>   return \`\${days} дней назад\`
 > }
 >
 > dv.el("div", null, {cls: "dataview"})
-> dv.container.innerHTML = `
+> dv.container.innerHTML = \`
 >   <div style="line-height: 1.8em;">
->     <span style="color: var(--text-muted); display: inline-block; width: 10em;">Создано</span>${fmt(created)} — ${ago(created)}<br>
->     <span style="color: var(--text-muted); display: inline-block; width: 10em;">Обновлено</span>${fmt(updated)} — ${ago(updated)}
+>     <span style="color: var(--text-muted); display: inline-block; width: 10em;">Создано</span>\${fmt(created)} — \${ago(created)}<br>
+>     <span style="color: var(--text-muted); display: inline-block; width: 10em;">Обновлено</span>\${fmt(updated)} — \${ago(updated)}
 >   </div>
-> `
-> ```
+> \`
+> \`\`\`
 
----
+---`
+
+} catch(e) {
+  new Notice("Шаблонизация отменена")
+}
+%>
