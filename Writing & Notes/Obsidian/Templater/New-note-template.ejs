@@ -1,7 +1,4 @@
 <%*
-const currentDate = tp.date.now("YYYY_MM_DD-HH_mm_ss_SSS")
-await tp.file.rename(currentDate)
-
 const fileTitle = await tp.system.prompt("Название")
 
 const sanitized = fileTitle
@@ -53,10 +50,89 @@ created: <% tp.date.now("YYYY-MM-DD") %>
 tags: [<% tagList.join(", ") %>]
 aliases: [<% aliasList.join(", ") %>]
 ---
-
 # <% fileTitle %>
 
 <% body %>
 
 ---
-Последнее изменение:: `$= dv.current().file.mtime`
+
+> [!link-here]- На эту страницу ссылаются
+> ```dataviewjs
+> const current = dv.current().file.path
+> const pages = dv.pages().where(p =>
+>   p.file.outlinks.some(l => l.path === current)
+> )
+> const html = pages.map(p =>
+>   `<a href="${p.file.path}" class="internal-link" style="
+>     display: inline-block; padding: 4px 10px; margin: 3px;
+>     border-radius: 12px; background: var(--interactive-accent);
+>     color: var(--text-on-accent); font-size: 0.85em; text-decoration: none;
+>   ">${p.file.name}</a>`
+> ).join("")
+> dv.el("div", html || "Нет ссылок", {cls: "dataview"})
+> ```
+
+> [!link-to]- Эта страница ссылается на
+> ```dataviewjs
+> const pages = dv.current().file.outlinks
+> const html = pages.map(p =>
+>   `<a href="${p.path}" class="internal-link" style="
+>     display: inline-block; padding: 4px 10px; margin: 3px;
+>     border-radius: 12px; background: var(--interactive-accent);
+>     color: var(--text-on-accent); font-size: 0.85em; text-decoration: none;
+>   ">${p.path.split("/").pop().replace(".md", "")}</a>`
+> ).join("")
+> dv.el("div", html || "Нет ссылок", {cls: "dataview"})
+> ```
+
+> [!tag-siblings]- Сиблинги по тегам
+> ```dataviewjs
+> const tags = dv.current().tags
+> if (!tags || tags.length === 0) {
+>   dv.el("div", "Нет тегов", {})
+> } else {
+>   const pages = dv.pages().where(p =>
+>     p.file.path !== dv.current().file.path &&
+>     p.tags &&
+>     p.tags.some(t => tags.includes(t))
+>   )
+>   const html = pages.map(p =>
+>     `<a href="${p.file.path}" class="internal-link" style="
+>       display: inline-block; padding: 4px 10px; margin: 3px;
+>       border-radius: 12px; background: var(--interactive-accent);
+>       color: var(--text-on-accent); font-size: 0.85em; text-decoration: none;
+>     ">${p.file.name}</a>`
+>   ).join("")
+>   dv.el("div", html || "Нет совпадений", {cls: "dataview"})
+> }
+> ```
+
+> [!info] Создано
+> ```dataviewjs
+> const created = new Date(dv.current().created)
+> const updated = new Date(dv.current().file.mtime)
+> const now = new Date()
+>
+> const fmt = (d) => d.toLocaleString("ru-RU", {
+>   day: "2-digit", month: "long", year: "numeric",
+>   hour: "2-digit", minute: "2-digit"
+> })
+>
+> const ago = (d) => {
+>   const days = Math.floor((now - d) / 86400000)
+>   if (days === 0) return "сегодня"
+>   if (days === 1) return "вчера"
+>   if (days < 5) return `${days} дня назад`
+>   return `${days} дней назад`
+> }
+>
+> dv.el("div", null, {cls: "dataview"})
+> dv.container.innerHTML = `
+>   <div style="line-height: 1.8em;">
+>     <span style="color: var(--text-muted); display: inline-block; width: 10em;">Создано</span>${fmt(created)} — ${ago(created)}<br>
+>     <span style="color: var(--text-muted); display: inline-block; width: 10em;">Обновлено</span>${fmt(updated)} — ${ago(updated)}
+>   </div>
+> `
+> ```
+
+---
