@@ -1,5 +1,5 @@
 <%*
-let _fileTitle, _entityType, _status, _tagList, _aliasList, _body, _nameVariants, _pseudonyms
+let _fileTitle, _entityType, _status, _tagList, _aliasList, _body, _nameVariants, _pseudonyms, _characterOptionalFields
 
 try {
   _fileTitle = await tp.system.prompt("Название")
@@ -33,11 +33,33 @@ try {
   _body = templates[_entityType] ?? `## Описание\n\n## Заметки\n`
 
 	if (_entityType === "👩🏻‍🦳 Персонаж") {
-		const nameVariantsRaw = await tp.system.prompt("Варианты имени (через запятую, или пусто)", "")
-		_nameVariants = nameVariantsRaw ? nameVariantsRaw.split(",").map(n => n.trim()) : []
+			const nameVariantsRaw = await tp.system.prompt("Варианты имени (через запятую, или пусто)", "")
+			_nameVariants = nameVariantsRaw ? nameVariantsRaw.split(",").map(n => n.trim()) : []
 
-		const pseudonymesRaw = await tp.system.prompt("Псевдонимы (через запятую, или пусто)", "")
-		_pseudonyms = nameVariantsRaw ? pseudonymesRaw.split(",").map(n => n.trim()) : []
+			const pseudonymesRaw = await tp.system.prompt("Псевдонимы (через запятую, или пусто)", "")
+			_pseudonyms = pseudonymesRaw ? pseudonymesRaw.split(",").map(n => n.trim()) : []
+
+    const fieldOptions = [
+        { label: "1\u00A0—\u00A0🏢\u00A0Организации",   key: "организации"  },
+        { label: "2\u00A0—\u00A0👥\u00A0Группировки",   key: "группировки"  },
+        { label: "3\u00A0—\u00A0🧝🏻\u00A0Раса",          key: "раса"         },
+        { label: "4\u00A0—\u00A0🗺️\u00A0Происхождение", key: "происхождение"},
+        { label: "5\u00A0—\u00A0👑\u00A0Титулы",        key: "титулы"       },
+        { label: "6\u00A0—\u00A0🎓\u00A0Навыки",        key: "навыки"       },
+    ]
+
+    const hint = fieldOptions.map(f => f.label.replace(/^/gm, "[").replace(/$/gm, "]")).join("\n")
+    const pickRaw = await tp.system.prompt(`Доп. поля — введи номера через запятую (или пусто):\n${hint}`, "")
+
+    if (pickRaw && pickRaw.trim()) {
+        const picked = pickRaw.split(",").map(s => parseInt(s.trim())).filter(n => !isNaN(n))
+        _characterOptionalFields = picked
+            .map(n => fieldOptions[n - 1])
+            .filter(Boolean)
+            .map(f => f.key)
+    } else {
+        _characterOptionalFields = []
+    }
 	}
 
 	if (_entityType !== "пусто") {
@@ -62,6 +84,9 @@ try {
 название: ${_fileTitle}
 ${_entityType === "👩🏻‍🦳 Персонаж" ? `имена:\n${_nameVariants.map(n => `  - ${n}`).join("\n")}` : ""}
 ${_entityType === "👩🏻‍🦳 Персонаж" ? `псевдонимы:\n${_pseudonyms.map(n => `  - ${n}`).join("\n")}` : ""}
+${_entityType === "👩🏻‍🦳 Персонаж" && _characterOptionalFields.length > 0
+    ? _characterOptionalFields.map(f => `${f}: []`).join("\n")
+    : ""}
 тип: ${_entityType}
 статус: ${_status}
 создано: ${tp.date.now("YYYY-MM-DDThh:mm")}
